@@ -5,14 +5,11 @@ package currencyConverter.local.ui.gui.objects;
 
 import static java.awt.GridBagConstraints.CENTER;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -22,13 +19,10 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.DocumentFilter;
 
 import currencyConverter.local.math.Calculation;
 import currencyConverter.local.valueobjects.CurrencyObject;
@@ -37,17 +31,13 @@ import currencyConverter.local.valueobjects.CurrencyObject;
  * @author mortlust
  *
  */
-public class AddGUIObjects extends DocumentFilter implements ActionListener, KeyListener, ItemListener {
+public class AddGUIObjects implements KeyListener, ItemListener {
 	
 	private int itemChanged = 0;
 	private int switchFromTo = 0;
 	private String selectedItemFrom, selectedItemTo;
 	private int defaultValue;
-	
-//	private DataAdministration da;
 		
-//	private int jFrameWidth;
-//	private int jFrameHeight;
 	private int fromIndex;
 	private int toIndex;
 	
@@ -62,19 +52,14 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	
 	private JTextField fromJTextField;
 	private JTextField toJTextField;
-	
-	private DocumentFilter filter;
-	
+		
 	private JComboBox<String> fromJComboBox = new JComboBox<>();
 	private JComboBox<String> toJComboBox = new JComboBox<>();
 	
-	private DefaultComboBoxModel modelFrom;
-	private DefaultComboBoxModel modelTo;
+	private DefaultComboBoxModel<String> modelFrom;
+	private DefaultComboBoxModel<String> modelTo;
 	
 	List<CurrencyObject> co;
-	
-	private JButton fromButton;
-	private JButton toButton;
 	
 	private Calculation c = new Calculation();
 	
@@ -93,18 +78,17 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		dataSource = new JLabel(senderName);
 		date = new JLabel(cubeTime);
 		
-		fromJTextField = new JTextField();
-		toJTextField = new JTextField();
+		fromJTextField = new JTextField("" + defaultValue);
+		toJTextField = new JTextField("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
 		
 //		disable paste
 		fromJTextField.setTransferHandler(null);
 		toJTextField.setTransferHandler(null);
 		
+//		component orientation LEFT_TO_RIGHT
 		fromJTextField.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		toJTextField.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-		
-//		fromButton = new JButton("test");
-		
+				
 		choice = new String[co.size()];
 		choiceFrom = new String[co.size()-1];
 		choiceTo = new String[co.size()-1];
@@ -117,9 +101,6 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 //		initializing combo boxes
 		initializeComboBox(co);
 		
-//		fromJComboBox = new JComboBox<>(choiceFrom);
-//		toJComboBox = new JComboBox<>(choiceTo);
-		
 		//////////////////////////////////////////////////
 		
 //		add events
@@ -129,32 +110,24 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		fromJComboBox.addItemListener(this);
 		toJComboBox.addItemListener(this);
 		
-		fromJTextField.setText("" + defaultValue);
-		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
+//		set default value for JTextField
+//		fromJTextField.setText("" + defaultValue);
+//		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
 		
-//		jFrameWidth = jframe.getWidth();
-//		jFrameHeight = jframe.getHeight();
-		
+//		set GridBagLayout for Jframe
 		jframe.setLayout(new GridBagLayout());
 		
-		JPanel p1 = new JPanel();
-		JPanel p2 = new JPanel();
 		
-		p1.setBackground(Color.green);
-		p2.setBackground(Color.red);
 		
 		addGB(jframe,fromLabel,0,0,3,0,0);
 		
 		addGB(jframe,fromJTextField,0,1,2,0,0);
 		addGB(jframe,fromJComboBox,2,1,1,0,0);
-//		addGB(jframe,p1,2,1,1,0,0);
-//		addGB(jframe,fromButton,2,1,1,0,0);
 		
 		addGB(jframe,toLabel,0,2,3,0,0);
 		
 		addGB(jframe,toJTextField,0,3,2,0,0);
 		addGB(jframe,toJComboBox,2,3,1,0,0);
-//		addGB(jframe,p2,2,3,1,0,0);
 		
 		addGB(jframe,dataSource,0,4,2,0,0);
 		addGB(jframe,date,2,4,1,0,0);
@@ -184,14 +157,14 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 				fromIndex = i;
 		}
 		
-		setJComboBoxItems();
+		updateJComboBox();
 		
 		setJLabelText(co,fromIndex, toIndex);
 		
 	}
 	
 //	update content of comboBox and JLabel during runtime
-	private void initializeComboBox(ItemEvent ie, List<CurrencyObject>  co, String selectedFrom, String selectedTo) {
+	private void itemHasChanged(ItemEvent ie, List<CurrencyObject>  co, String selectedFrom, String selectedTo) {
 		
 		int j = 0;
 		
@@ -221,6 +194,7 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 				
 	}
 	
+//	update JTextField text
 	private void updateJTextField(ItemEvent ie) {
 		if(ie.getSource() == fromJComboBox) {
 			System.out.println("source -> fromJComboBox");
@@ -232,22 +206,20 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		}
 	}
 	
-	public void setJComboBoxItems() {
-		
+//	set/update JComboBox items	
+	public void updateJComboBox() {
+//		setJComboBoxItems();
 		fromJComboBox.removeAllItems();
 		toJComboBox.removeAllItems();
 				
-		modelFrom = new DefaultComboBoxModel(choiceFrom);
-		modelTo = new DefaultComboBoxModel(choiceTo);
+		modelFrom = new DefaultComboBoxModel<String>(choiceFrom);
+		modelTo = new DefaultComboBoxModel<String>(choiceTo);
 		
 		fromJComboBox.setModel(modelFrom);
 		toJComboBox.setModel(modelTo);
 	}
 	
-	public void updateJComboBox() {
-		setJComboBoxItems();
-	}
-	
+//	set/update JLabel text
 	private void setJLabelText(List<CurrencyObject>  co, int fromIndex, int toIndex) {
 		
 		for(int i = 0;i<co.size();i++) {
@@ -264,7 +236,26 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 			}
 		}
 	}
-
+	
+//	check if user entry matches numbers
+	private void checkEntry(KeyEvent ke) {	
+		String s = fromJTextField.getText();
+		fromJTextField.setText(s.replaceAll("[^0-9.]", ""));
+		
+	}
+	
+//	update JTextField text
+	private void valueHasChanged(KeyEvent ke) {
+//		.toPlainString() changes BigDecimal String from E+1 to 10
+		if(ke.getSource() == fromJTextField) {
+			toJTextField.setText((c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText()))).toPlainString());
+		}
+		if(ke.getSource() == toJTextField) {
+			fromJTextField.setText((c.calc(co.get(toIndex), co.get(fromIndex), new BigDecimal(toJTextField.getText()))).toPlainString());
+		}
+	}
+	
+//	add objects to GridBagLayout
 	private void addGB(JFrame jframe, Component component, int gridx, int gridy, int gridwidth, int gridheight,int fill, double weightx, double weighty, int anchor, Insets insets,int ipadx, int ipady) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
@@ -280,60 +271,10 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
         constraints.ipady = ipady;
         jframe.add(component, constraints);
     }
-	
+
+//	add objects to GridBagLayout
 	private void addGB(JFrame jframe, Component component, int gridx, int gridy, int width, int ipadx, int ipady) {
         addGB(jframe, component, gridx, gridy, width, 1, GridBagConstraints.BOTH, 0.0, 0.0, CENTER, new Insets(5, 5, 5, 5), ipadx, ipady);
-	}
-	
-	private void addGB(JPanel p, Component component, int gridx, int gridy, int gridwidth, int gridheight,int fill, double weightx, double weighty, int anchor, Insets insets,int ipadx, int ipady) {
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = gridx;
-        constraints.gridy = gridy;
-        constraints.gridwidth = gridwidth;
-        constraints.gridheight = gridheight;
-        constraints.fill = fill;
-        constraints.weightx = weightx;
-        constraints.weighty = weighty;
-        constraints.anchor = anchor;
-        constraints.insets = insets;
-        constraints.ipadx = ipadx;
-        constraints.ipady = ipady;
-        p.add(component, constraints);
-    }
-	
-	private void addGB(JPanel p, Component component, int gridx, int gridy, int width, int ipadx, int ipady) {
-        addGB(p, component, gridx, gridy, width, 1, GridBagConstraints.BOTH, 0.0, 0.0, CENTER, new Insets(5, 5, 5, 5), ipadx, ipady);
-	}
-	
-	private void checkEntry(ActionEvent ke) {
-		
-		String s = fromJTextField.getText();
-		fromJTextField.setText(s.replaceAll("[^0-9.]", ""));
-
-	}
-	
-	private void checkEntry(KeyEvent ke) {
-		
-		String s = fromJTextField.getText();
-		fromJTextField.setText(s.replaceAll("[^0-9.]", ""));
-		
-	}
-	
-	private void valueHasChanged(KeyEvent ke) {
-//		.toPlainString() changes BigDecimal String from E+1 to 10
-		if(ke.getSource() == fromJTextField) {
-			toJTextField.setText((c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText()))).toPlainString());
-		}
-		if(ke.getSource() == toJTextField) {
-			fromJTextField.setText((c.calc(co.get(toIndex), co.get(fromIndex), new BigDecimal(toJTextField.getText()))).toPlainString());
-		}
-	}
-	
-	private void itemHasChanged(ItemEvent ie, String selectedItemFrom, String selectedItemTo) {
-//		String fromSelectedItem, toSelectedItem;
-//		fromSelectedItem = "" + fromJComboBox.getSelectedItem();
-//		toSelectedItem = "" + toJComboBox.getSelectedItem();
-		initializeComboBox(ie, co, selectedItemFrom, selectedItemTo);
 	}
 	
 	@Override
@@ -357,12 +298,6 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent ae) {
-		// TODO Auto-generated method stub
-		checkEntry(ae);
-	}
-
-	@Override
 	public void itemStateChanged(ItemEvent ie) {
 		// TODO Auto-generated method stub
 		if(ie.getStateChange() == 1) {
@@ -372,7 +307,8 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 					selectedItemFrom = "" + fromJComboBox.getSelectedItem();
 //					System.out.println("selectedItemFrom -> " + selectedItemFrom);
 					selectedItemTo = "" + toJComboBox.getSelectedItem();
-					itemHasChanged(ie, selectedItemFrom, selectedItemTo);
+					itemHasChanged(ie,co,selectedItemFrom,selectedItemTo);
+//					itemHasChanged(ie, selectedItemFrom, selectedItemTo);
 					switchFromTo++;
 					System.out.println("itemChanged nach fromJComboBox.setSelectedIndex -> " + itemChanged);
 					fromJComboBox.setSelectedItem(selectedItemFrom);

@@ -13,8 +13,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import currencyConverter.local.valueobjects.CurrencyObject;
-import currencyConverter.local.data.persistence.DataPersistenceManager;
-import currencyConverter.local.data.persistence.ObjectDataPersistenceManager;
 
 public class DataAdministration {
 	
@@ -34,10 +32,7 @@ public class DataAdministration {
 	private List<Element> cubeChild;
 	private List<Element> listCubeChildren;
 	private List<CurrencyObject> lco = new Vector<CurrencyObject>();
-	
-//	persistence-interface, managing details of data access
-	private DataPersistenceManager pm = new ObjectDataPersistenceManager();
-	
+		
 	public List<CurrencyObject> readDataXML() {
 		
 //		int i = 0;
