@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="/Users/mortlust/Documents/dev/Java/external_jar/opencsv-5.7.1.jar"/>
+	<classpathentry kind="lib" path="/Users/mortlust/Documents/dev/Java/external_jar/commons-lang3-3.12.0/commons-lang3-3.12.0.jar"/>
+	<classpathentry kind="lib" path="/Users/mortlust/Documents/dev/Java/external_jar/jdom-2.0.6.1/jdom-2.0.6.1.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
