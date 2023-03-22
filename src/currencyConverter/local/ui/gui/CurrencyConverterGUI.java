@@ -2,6 +2,7 @@ package currencyConverter.local.ui.gui;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Vector;
 
@@ -70,7 +71,7 @@ public class CurrencyConverterGUI extends JFrame {
 				int i = 10;
 				System.out.println("----------Currency-Converter------------");
 				System.out.println("----------------------------------------");
-				System.out.println("------" + i + " " + co.get(0).getSymbol() + " sind " + c.calc(co.get(0),co.get(29),i) + " " + co.get(29).getSymbol() + "--------");
+				System.out.println("------" + i + " " + co.get(0).getSymbol() + " sind " + c.calc(co.get(0),co.get(29),BigDecimal.valueOf(i)) + " " + co.get(29).getSymbol() + "--------");
 				System.out.println("----------------------------------------");
 				System.out.println("----------------------------------------");
 				

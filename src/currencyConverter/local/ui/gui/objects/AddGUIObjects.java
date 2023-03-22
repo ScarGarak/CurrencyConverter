@@ -17,6 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Vector;
 
@@ -39,7 +40,8 @@ import currencyConverter.local.valueobjects.CurrencyObject;
 public class AddGUIObjects extends DocumentFilter implements ActionListener, KeyListener, ItemListener {
 	
 	private int itemChanged = 0;
-	private int selectedIndexFrom, selectedIndexTo;
+	private int switchFromTo = 0;
+	private String selectedItemFrom, selectedItemTo;
 	private int defaultValue;
 	
 //	private DataAdministration da;
@@ -53,15 +55,13 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	private String[] choiceFrom;
 	private String[] choiceTo;
 	
-	private JLabel fromLabel;
-	private JLabel toLabel;
+	private JLabel fromLabel = new JLabel();
+	private JLabel toLabel = new JLabel();
 	private JLabel dataSource;
 	private JLabel date;
 	
 	private JTextField fromJTextField;
 	private JTextField toJTextField;
-//	use instead of regular JTextField??
-//	private JFormattedTextField ftf = new JFormattedTextField(NumberFormat.getIntegerInstance());
 	
 	private DocumentFilter filter;
 	
@@ -130,7 +130,7 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		toJComboBox.addItemListener(this);
 		
 		fromJTextField.setText("" + defaultValue);
-		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), Integer.parseInt(fromJTextField.getText())));
+		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
 		
 //		jFrameWidth = jframe.getWidth();
 //		jFrameHeight = jframe.getHeight();
@@ -215,24 +215,22 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		
 		updateJComboBox();
 		
-//		fromJComboBox.setSelectedIndex(fromIndex);
-		
+		updateJTextField(ie);
+				
 		setJLabelText(co,fromIndex, toIndex);
-		
-//		jframe.renew();
-		
+				
 	}
 	
-//	public int returnIndex(String s) {
-//		
-//		for(int i = 0;i<choiceFrom.length;i++) {
-//			if(fromJComboBox.getItemAt(i).equals(s)) {
-//				return i;
-//			}
-//		}
-//		
-//		return 0;
-//	}
+	private void updateJTextField(ItemEvent ie) {
+		if(ie.getSource() == fromJComboBox) {
+			System.out.println("source -> fromJComboBox");
+			toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
+		}
+		if(ie.getSource() == toJComboBox) {
+			System.out.println("source -> toJComboBox");
+			fromJTextField.setText("" + c.calc(co.get(toIndex), co.get(fromIndex), new BigDecimal(toJTextField.getText())));
+		}
+	}
 	
 	public void setJComboBoxItems() {
 		
@@ -254,14 +252,14 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		
 		for(int i = 0;i<co.size();i++) {
 			if(choiceFrom[i].equals(co.get(fromIndex).getSymbol())) {
-				fromLabel = new JLabel(co.get(fromIndex).getDisplayName());
+				fromLabel.setText(co.get(fromIndex).getDisplayName());
 				break;
 			}
 		}
 		
 		for(int i = 0;i<co.size();i++) {
 			if(choiceTo[i].equals(co.get(toIndex).getSymbol())) {
-				toLabel = new JLabel(co.get(toIndex).getDisplayName());
+				toLabel.setText(co.get(toIndex).getDisplayName());
 				break;
 			}
 		}
@@ -324,39 +322,18 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	private void valueHasChanged(KeyEvent ke) {
 //		.toPlainString() changes BigDecimal String from E+1 to 10
 		if(ke.getSource() == fromJTextField) {
-			toJTextField.setText((c.calc(co.get(fromIndex), co.get(toIndex), Integer.parseInt(fromJTextField.getText()))).toPlainString());
+			toJTextField.setText((c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText()))).toPlainString());
 		}
 		if(ke.getSource() == toJTextField) {
-			fromJTextField.setText((c.calc(co.get(toIndex), co.get(fromIndex), Integer.parseInt(toJTextField.getText()))).toPlainString());
+			fromJTextField.setText((c.calc(co.get(toIndex), co.get(fromIndex), new BigDecimal(toJTextField.getText()))).toPlainString());
 		}
 	}
 	
-	private void itemHasChanged(ItemEvent ie) {
-//		System.out.println("itemHasChanged");
-		String fromSelectedItem, toSelectedItem;
-//		fromSelectedItem = "" + ie.getItem();
-		fromSelectedItem = "" + fromJComboBox.getSelectedItem();
-//		System.out.println("fromSelectedItem -> " + fromSelectedItem);
-		toSelectedItem = "" + toJComboBox.getSelectedItem();
-		initializeComboBox(ie, co, fromSelectedItem, toSelectedItem);
+	private void itemHasChanged(ItemEvent ie, String selectedItemFrom, String selectedItemTo) {
+//		String fromSelectedItem, toSelectedItem;
 //		fromSelectedItem = "" + fromJComboBox.getSelectedItem();
 //		toSelectedItem = "" + toJComboBox.getSelectedItem();
-////		System.out.println("fromSelectedItem" + fromSelectedItem);
-//		initializeComboBox(co, fromSelectedItem, toSelectedItem);
-		
-//		if(ie.getSource() == fromJComboBox) {
-//			System.out.println("source is fromJComboBox");
-//			toSelectedItem = "" + toJComboBox.getSelectedItem();
-//			initializeComboBox(co, fromSelectedItem, toSelectedItem);
-//		}
-		
-////		something went wrong..
-//		if(ie.getSource() == toJComboBox) {
-//			System.out.println("source is toComboBox");
-////			System.out.println("toJComboBox: ie.getItem() -> " + ie.getItem());
-//			toSelectedItem = "" + toJComboBox.getSelectedItem();
-//			initializeComboBox(co, fromSelectedItem, toSelectedItem);
-//		}
+		initializeComboBox(ie, co, selectedItemFrom, selectedItemTo);
 	}
 	
 	@Override
@@ -390,17 +367,24 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 		// TODO Auto-generated method stub
 		if(ie.getStateChange() == 1) {
 			if(itemChanged==0) {
-				System.out.println("if(itemChanged==1) -> " + itemChanged);
-				selectedIndexFrom = fromJComboBox.getSelectedIndex();
-				selectedIndexTo = toJComboBox.getSelectedIndex();
-				itemHasChanged(ie);
-				itemChanged++;
-				fromJComboBox.setSelectedIndex(selectedIndexFrom);
-				itemChanged++;
-				toJComboBox.setSelectedIndex(selectedIndexTo);
-//				itemChanged++;
+				if(switchFromTo == 0) {
+//					System.out.println("if(itemChanged==1) -> " + itemChanged);
+					selectedItemFrom = "" + fromJComboBox.getSelectedItem();
+//					System.out.println("selectedItemFrom -> " + selectedItemFrom);
+					selectedItemTo = "" + toJComboBox.getSelectedItem();
+					itemHasChanged(ie, selectedItemFrom, selectedItemTo);
+					switchFromTo++;
+					System.out.println("itemChanged nach fromJComboBox.setSelectedIndex -> " + itemChanged);
+					fromJComboBox.setSelectedItem(selectedItemFrom);
+				}
+				if(switchFromTo == 1) {
+					itemChanged++;
+					switchFromTo--;
+					System.out.println("itemChanged nach toComboBox.setSelectedIndex -> " + itemChanged);
+					toJComboBox.setSelectedItem(selectedItemTo);
+				}
 			} else if(itemChanged==1) {
-				System.out.println("if(itemChanged==1) -> " + itemChanged);
+				System.out.println("else(itemChanged==1) -> " + itemChanged);
 				itemChanged--;
 			}
 		} 
