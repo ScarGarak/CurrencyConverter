@@ -191,7 +191,7 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	}
 	
 //	update content of comboBox and JLabel during runtime
-	private void initializeComboBox(List<CurrencyObject>  co, String selectedFrom, String selectedTo) {
+	private void initializeComboBox(ItemEvent ie, List<CurrencyObject>  co, String selectedFrom, String selectedTo) {
 		
 		int j = 0;
 		
@@ -334,26 +334,29 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 	private void itemHasChanged(ItemEvent ie) {
 //		System.out.println("itemHasChanged");
 		String fromSelectedItem, toSelectedItem;
-		fromSelectedItem = "" + ie.getItem();
-		System.out.println("fromSelectedItem -> " + fromSelectedItem);
+//		fromSelectedItem = "" + ie.getItem();
+		fromSelectedItem = "" + fromJComboBox.getSelectedItem();
+//		System.out.println("fromSelectedItem -> " + fromSelectedItem);
+		toSelectedItem = "" + toJComboBox.getSelectedItem();
+		initializeComboBox(ie, co, fromSelectedItem, toSelectedItem);
 //		fromSelectedItem = "" + fromJComboBox.getSelectedItem();
 //		toSelectedItem = "" + toJComboBox.getSelectedItem();
 ////		System.out.println("fromSelectedItem" + fromSelectedItem);
 //		initializeComboBox(co, fromSelectedItem, toSelectedItem);
 		
-		if(ie.getSource() == fromJComboBox) {
-			System.out.println("source is fromJComboBox");
-			toSelectedItem = "" + toJComboBox.getSelectedItem();
-			initializeComboBox(co, fromSelectedItem, toSelectedItem);
-		}
+//		if(ie.getSource() == fromJComboBox) {
+//			System.out.println("source is fromJComboBox");
+//			toSelectedItem = "" + toJComboBox.getSelectedItem();
+//			initializeComboBox(co, fromSelectedItem, toSelectedItem);
+//		}
 		
-//		something went wrong..
-		if(ie.getSource() == toJComboBox) {
-			System.out.println("source is toComboBox");
+////		something went wrong..
+//		if(ie.getSource() == toJComboBox) {
+//			System.out.println("source is toComboBox");
 ////			System.out.println("toJComboBox: ie.getItem() -> " + ie.getItem());
 //			toSelectedItem = "" + toJComboBox.getSelectedItem();
 //			initializeComboBox(co, fromSelectedItem, toSelectedItem);
-		}
+//		}
 	}
 	
 	@Override
@@ -393,7 +396,9 @@ public class AddGUIObjects extends DocumentFilter implements ActionListener, Key
 				itemHasChanged(ie);
 				itemChanged++;
 				fromJComboBox.setSelectedIndex(selectedIndexFrom);
+				itemChanged++;
 				toJComboBox.setSelectedIndex(selectedIndexTo);
+//				itemChanged++;
 			} else if(itemChanged==1) {
 				System.out.println("if(itemChanged==1) -> " + itemChanged);
 				itemChanged--;
