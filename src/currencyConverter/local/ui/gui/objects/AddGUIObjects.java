@@ -78,8 +78,8 @@ public class AddGUIObjects implements KeyListener, ItemListener {
 		dataSource = new JLabel(senderName);
 		date = new JLabel(cubeTime);
 		
-		fromJTextField = new JTextField("" + defaultValue);
-		toJTextField = new JTextField("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
+		fromJTextField = new JTextField();
+		toJTextField = new JTextField();
 		
 //		disable paste
 		fromJTextField.setTransferHandler(null);
@@ -111,8 +111,8 @@ public class AddGUIObjects implements KeyListener, ItemListener {
 		toJComboBox.addItemListener(this);
 		
 //		set default value for JTextField
-//		fromJTextField.setText("" + defaultValue);
-//		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
+		fromJTextField.setText("" + defaultValue);
+		toJTextField.setText("" + c.calc(co.get(fromIndex), co.get(toIndex), new BigDecimal(fromJTextField.getText())));
 		
 //		set GridBagLayout for Jframe
 		jframe.setLayout(new GridBagLayout());
